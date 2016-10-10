@@ -24,6 +24,8 @@ Usage:
 
 Options:
   -d --directory <path>   Root directory to place repositories. [default: /var/mirrord/]
+  -l --listen <addr>      Listen specified address for HTTP connections. [default: :80]
+  -s --listen-ssl <addr>  Listen specified address for HTTPS connections. [default: :443]
   -g --git-daemon <port>  Address of git daemon. [default: localhost:9418] 
   -k --key <path>         SSL certificate public part. [default: /etc/mirrord/ssl.key]
   -c --crt <path>         SSL certificate private part. [default: /etc/mirrord/ssl.crt]
@@ -36,10 +38,12 @@ func main() {
 	args := godocs.MustParse(usage, version, godocs.UsePager)
 
 	var (
-		root   = args["--directory"].(string)
-		daemon = args["--git-daemon"].(string)
-		sslKey = args["--key"].(string)
-		sslCrt = args["--crt"].(string)
+		root      = args["--directory"].(string)
+		listen    = (args["--listen"].(string))
+		listenSSL = (args["--listen-ssl"].(string))
+		daemon    = args["--git-daemon"].(string)
+		sslKey    = args["--key"].(string)
+		sslCrt    = args["--crt"].(string)
 	)
 
 	http.HandleFunc(
@@ -63,20 +67,20 @@ func main() {
 	)
 
 	go func() {
-		err := http.ListenAndServeTLS(":443", sslCrt, sslKey, nil)
+		err := http.ListenAndServeTLS(listenSSL, sslCrt, sslKey, nil)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}()
 
 	go func() {
-		err := http.ListenAndServe(":80", nil)
+		err := http.ListenAndServe(listen, nil)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}()
 
-	log.Printf("listen on :80 and :443")
+	log.Printf("listen on %s and %s", listen, listenSSL)
 
 	select {}
 }
