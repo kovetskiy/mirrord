@@ -23,10 +23,10 @@ Usage:
     mirrord --version
 
 Options:
-  -d --directory <path>  Root directory to place repositories. [default: /var/mirrord/]
-  -g --git-daemon <port> Port of git daemon. [default: 9419] 
-  -h --help              Show this screen.
-  --version              Show version.
+  -d --directory <path>   Root directory to place repositories. [default: /var/mirrord/]
+  -g --git-daemon <port>  Port of git daemon. [default: 9419] 
+  -h --help               Show this screen.
+  --version               Show version.
 `
 )
 
