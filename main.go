@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
 
-	"github.com/kovetskiy/executil"
 	"github.com/kovetskiy/godocs"
+	"github.com/reconquest/executil-go"
 )
 
 var (
@@ -44,7 +45,7 @@ func main() {
 
 			err := sync(module, root)
 			if err != nil {
-				errorln(err)
+				log.Println(err)
 			}
 
 			fmt.Fprintf(
@@ -74,18 +75,21 @@ func clone(module, root string) error {
 		"git://",
 	}
 
+	log.Printf("clone: %s", module)
+
 	for _, prefix := range prefixes {
 		_, _, err := executil.Run(
 			exec.Command(
-				"git", "clone", prefix+module, filepath.Join(root, module),
+				"git", "clone", "--mirror",
+				prefix+module, filepath.Join(root, module),
 			),
 		)
 		if err != nil {
-			errorln(err)
+			log.Println(err)
 			continue
 		}
 
-		return
+		return nil
 	}
 
 	return fmt.Errorf("can't clone repository: %s", module)
@@ -94,6 +98,8 @@ func clone(module, root string) error {
 func update(module, root string) error {
 	cmd := exec.Command("git", "remote", "update")
 	cmd.Dir = filepath.Join(root, module)
+
+	log.Printf("sync: %s", module)
 
 	_, _, err := executil.Run(cmd)
 	if err != nil {
