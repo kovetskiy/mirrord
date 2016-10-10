@@ -24,7 +24,7 @@ Usage:
 
 Options:
   -d --directory <path>   Root directory to place repositories. [default: /var/mirrord/]
-  -g --git-daemon <port>  Port of git daemon. [default: 9419] 
+  -g --git-daemon <port>  Address of git daemon. [default: localhost:9418] 
   -k --key <path>         SSL certificate public part. [default: /etc/mirrord/ssl.key]
   -c --crt <path>         SSL certificate private part. [default: /etc/mirrord/ssl.crt]
   -h --help               Show this screen.
@@ -55,7 +55,7 @@ func main() {
 			fmt.Fprintf(
 				response,
 				`<html><head><meta name="go-import" `+
-					`content="%s git git://localhost:%s/%s"`+
+					`content="%s git git://%s/%s"`+
 					`/></head></html>`,
 				module, daemon, module,
 			)
@@ -100,12 +100,12 @@ func clone(module, root string) error {
 	log.Printf("clone: %s", module)
 
 	for _, prefix := range prefixes {
-		_, _, err := executil.Run(
-			exec.Command(
-				"git", "clone", "--mirror",
-				prefix+module, filepath.Join(root, module),
-			),
+		cmd := exec.Command(
+			"git", "clone", "--mirror", "--quite",
+			prefix+module, filepath.Join(root, module),
 		)
+
+		_, _, err := executil.Run(cmd)
 		if err != nil {
 			log.Println(err)
 			continue
