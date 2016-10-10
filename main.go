@@ -25,8 +25,8 @@ Usage:
 Options:
   -d --directory <path>   Root directory to place repositories. [default: /var/mirrord/]
   -g --git-daemon <port>  Port of git daemon. [default: 9419] 
-  -k --key                SSL certificate public part. [default: /etc/mirrord/ssl.key]
-  -c --crt                SSL certificate private part. [default: /etc/mirrord/ssl.crt]
+  -k --key <path>         SSL certificate public part. [default: /etc/mirrord/ssl.key]
+  -c --crt <path>         SSL certificate private part. [default: /etc/mirrord/ssl.crt]
   -h --help               Show this screen.
   --version               Show version.
 `
