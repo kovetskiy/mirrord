@@ -105,7 +105,7 @@ func clone(module, root string) error {
 
 	for _, prefix := range prefixes {
 		cmd := exec.Command(
-			"git", "clone", "--mirror", "--quite",
+			"git", "clone", "--mirror", "--quiet",
 			prefix+module, filepath.Join(root, module),
 		)
 
