@@ -1,0 +1,9 @@
+[Unit]
+Description=git daemon for mirrord
+
+[Service]
+ExecStart=/usr/lib/git-core/git-daemon --export-all --base-path=/var/mirrord --max-connections=0 --reuseaddr
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

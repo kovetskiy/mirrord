@@ -1,0 +1,9 @@
+[Unit]
+Description=git repository mirror daemon
+
+[Service]
+ExecStart=/usr/bin/mirrord
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
