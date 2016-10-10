@@ -25,6 +25,8 @@ Usage:
 Options:
   -d --directory <path>   Root directory to place repositories. [default: /var/mirrord/]
   -g --git-daemon <port>  Port of git daemon. [default: 9419] 
+  -k --key                SSL certificate public part. [default: /etc/mirrord/ssl.key]
+  -c --crt                SSL certificate private part. [default: /etc/mirrord/ssl.crt]
   -h --help               Show this screen.
   --version               Show version.
 `
@@ -36,6 +38,8 @@ func main() {
 	var (
 		root   = args["--directory"].(string)
 		daemon = args["--git-daemon"].(string)
+		sslKey = args["--key"].(string)
+		sslCrt = args["--crt"].(string)
 	)
 
 	http.HandleFunc(
@@ -57,6 +61,24 @@ func main() {
 			)
 		},
 	)
+
+	go func() {
+		err := http.ListenAndServeTLS(":443", sslCrt, sslKey, nil)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	go func() {
+		err := http.ListenAndServe(":80", nil)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	log.Printf("listen on :80 and :443")
+
+	select {}
 }
 
 func sync(module, root string) error {
