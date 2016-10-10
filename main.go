@@ -49,6 +49,11 @@ func main() {
 	http.HandleFunc(
 		"/",
 		func(response http.ResponseWriter, request *http.Request) {
+			if request.URL.Query().Get("go-get") != "1" {
+				response.WriteHeader(http.StatusBadRequest)
+				return
+			}
+
 			module := request.Host + request.URL.Path
 
 			err := sync(module, root)
@@ -96,9 +101,8 @@ func sync(module, root string) error {
 
 func clone(module, root string) error {
 	prefixes := []string{
-		"https://",
-		"git+ssh://",
 		"git://",
+		"git+ssh://",
 	}
 
 	log.Printf("clone: %s", module)
